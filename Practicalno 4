@@ -1,0 +1,43 @@
+import cv2
+import matplotlib.pyplot as plt
+from google.colab import files
+import os
+
+# Step 1: Upload an image file
+uploaded = files.upload()
+
+# Step 2: Get the uploaded filename
+filename = list(uploaded.keys())[0]
+print("Uploaded file:", filename)
+
+# Step 3: Read the image
+image = cv2.imread(filename)
+
+# Safety check
+if image is None:
+    raise ValueError("Image not loaded. Check filename or upload again.")
+
+# Step 4: Convert to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Step 5: Initialize SIFT detector
+sift = cv2.SIFT_create()
+
+# Step 6: Detect keypoints and compute descriptors
+keypoints, descriptors = sift.detectAndCompute(gray, None)
+
+print("Number of keypoints detected:", len(keypoints))
+print("Descriptor shape:", descriptors.shape)
+
+# Step 7: Draw keypoints on the image
+sift_image = cv2.drawKeypoints(
+    image, keypoints, None,
+    flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS
+)
+
+# Step 8: Display the result
+plt.figure(figsize=(10, 6))
+plt.imshow(cv2.cvtColor(sift_image, cv2.COLOR_BGR2RGB))
+plt.title("SIFT Keypoints")
+plt.axis("off")
+plt.show()
